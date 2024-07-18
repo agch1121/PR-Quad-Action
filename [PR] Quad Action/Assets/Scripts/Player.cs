@@ -8,6 +8,17 @@ public class Player : MonoBehaviour
     public float speed;
     public GameObject[] weapons;
     public bool[] hasWeapons;
+    public GameObject[] grenades;
+    public int hasGrenades;
+
+    public int ammo;
+    public int coin;
+    public int health;
+
+    public int maxAmmo;
+    public int maxCoin;
+    public int maxHealth;
+    public int maxHasGrenades;
 
     float hAxis;
     float vAxis;
@@ -171,13 +182,47 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Item")
+        {
+            Item item = other.GetComponent<Item>();
+            switch (item.type)
+            {
+                case Item.Type.Ammo:
+                    ammo += item.value;
+                    if(ammo > maxAmmo) // 만약 최대치를 넘어간다면 최대치값으로 현재 값 설정
+                        ammo = maxAmmo;
+                    break;
+                case Item.Type.Coin:
+                    coin += item.value;
+                    if (coin > maxCoin) // 만약 최대치를 넘어간다면 최대치값으로 현재 값 설정
+                        coin = maxCoin;
+                    break;
+                case Item.Type.Heart:
+                    health += item.value;
+                    if (health > maxHealth) // 만약 최대치를 넘어간다면 최대치값으로 현재 값 설정
+                        health = maxHealth;
+                    break;
+                case Item.Type.Grenade:
+                    if (hasGrenades == maxHasGrenades)
+                        return;
+                    grenades[hasGrenades].SetActive(true);
+                    hasGrenades += item.value;
+                    break;
+            }
+            Destroy(other.gameObject);
+        }
+    }
+
+
+    void OnTriggerStay(Collider other)
     {
         if (other.tag == "Weapon")
             nearObject = other.gameObject;
     }
 
-    private void OnTriggerExit(Collider other)
+    void OnTriggerExit(Collider other)
     {
         if(other.tag == "Weapon")
             nearObject = null;
