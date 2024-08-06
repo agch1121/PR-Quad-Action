@@ -9,6 +9,9 @@ public class Boss : Enemy
     public GameObject missile;
     public Transform missilePortA;
     public Transform missilePortB;
+    public AudioSource tauntSound;
+    public AudioSource rockSound;
+    public AudioSource missileSound;
 
     Vector3 lookVec;
     Vector3 tauntVec;
@@ -74,11 +77,13 @@ public class Boss : Enemy
     IEnumerator MissileShot()
     {
         anim.SetTrigger("doShot");
+        missileSound.Play();
         yield return new WaitForSeconds(0.2f);
         GameObject instantMissileA = Instantiate(missile, missilePortA.position, missilePortA.rotation);
         BossMissile bossMissileA = instantMissileA.GetComponent<BossMissile>();
         bossMissileA.target = target;
 
+        missileSound.Play();
         yield return new WaitForSeconds(0.3f);
         GameObject instantMissileB = Instantiate(missile, missilePortB.position, missilePortB.rotation);
         BossMissile bossMissileB = instantMissileB.GetComponent<BossMissile>();
@@ -93,6 +98,7 @@ public class Boss : Enemy
     {
         isLook = false;
         anim.SetTrigger("doBigShot");
+        rockSound.Play();
         Instantiate(bullet, transform.position, transform.rotation);
         yield return new WaitForSeconds(3f);
 
@@ -108,7 +114,7 @@ public class Boss : Enemy
         nav.isStopped = false;
         boxCollider.enabled = false;
         anim.SetTrigger("doTaunt");
-
+        tauntSound.Play();
         yield return new WaitForSeconds(1.5f);
         meleeArea.enabled = true;
 
@@ -119,6 +125,7 @@ public class Boss : Enemy
         isLook = true;
         nav.isStopped = true;
         boxCollider.enabled = true;
+        
 
         StartCoroutine(Think());
     }
